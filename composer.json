@@ -1,0 +1,20 @@
+{
+    "name": "origin/risk-profiling",
+    "type": "project",
+    "require": {
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Origin\\RiskProfiling\\": "lib/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ana Magnoni",
+            "email": "anafmagnoni@gmail.com"
+        }
+    ]
+}
