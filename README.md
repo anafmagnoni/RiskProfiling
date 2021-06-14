@@ -31,5 +31,13 @@ composer test
 You can also specify a single test class file:
 
 ```shell
-composer test -- test/SampleTest.php
+composer test -- test/RiskProfileCalculatorTest.php
 ```
+
+As a design decision, all logic algorithms used to evaluate the user's information and calculate her risk profile
+were placed in the `Internal` directory, leaving only the class that serves as the controller's entry point exposed.
+
+Only the main class `RiskPorfileCalculator` has a test file for it, covering all possible condition
+fulfillments. This way, we test the main class that gathers all the logic, not the secondary ones that are only invoked through the
+main class and never by themselves.
+
