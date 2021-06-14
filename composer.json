@@ -11,6 +11,14 @@
             "Origin\\RiskProfiling\\": "lib/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\Origin\\RiskProfiling\\": "test/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
     "authors": [
         {
             "name": "Ana Magnoni",

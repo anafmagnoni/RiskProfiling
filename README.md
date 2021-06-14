@@ -19,3 +19,17 @@ docker-compose exec php bash
 ```
 
 Inside this PHP container, composer is available and ready to use.
+
+## Testing
+
+PHPUnit is the test framework. To run the entire test suite, run the following command inside the PHP container:
+
+```shell
+composer test
+```
+
+You can also specify a single test class file:
+
+```shell
+composer test -- test/SampleTest.php
+```
