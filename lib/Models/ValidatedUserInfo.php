@@ -27,7 +27,7 @@ class ValidatedUserInfo {
         }
 
         if ($validated_json['vehicle']) {
-            $this->vehicle = new UserVehicle($validated_json['vehicle']['manufacturing_year']);
+            $this->vehicle = new UserVehicle($validated_json['vehicle']['year']);
         }
     }
 }

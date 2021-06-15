@@ -7,7 +7,9 @@ use PHPUnit\Framework\TestCase;
 
 class RiskProfilePlanTest extends TestCase {
 
-    /** @dataProvider provideInsurancePlanDefiningCases */
+    /**
+     * @dataProvider provideInsurancePlanDefiningCases
+     */
     public function testGivenRiskScore_WillBeMappedToExpectedInsurancePlan(?int $insurance_score, $expected_insurance_plan) {
         $this->assertEquals($expected_insurance_plan,
             RiskProfilePlanDefiner::definePlanForRiskScore($insurance_score));

@@ -11,4 +11,4 @@ RUN apt-get update; \
 
 WORKDIR /var/www/html
 
-ENTRYPOINT php -S 0.0.0.0:8080
+ENTRYPOINT php -S 0.0.0.0:8080 public/index.php

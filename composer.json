@@ -2,6 +2,8 @@
     "name": "origin/risk-profiling",
     "type": "project",
     "require": {
+        "laminas/laminas-diactoros": "2.5.0",
+        "narrowspark/http-emitter": "2.0.4",
         "justinrainbow/json-schema": "5.2.10"
     },
     "require-dev": {

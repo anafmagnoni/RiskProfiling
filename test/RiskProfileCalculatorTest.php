@@ -13,7 +13,7 @@ class RiskProfileCalculatorTest extends TestCase {
     /**
      * @dataProvider provideRiskScoreDefiningCases
      */
-    public function testGivenUserInfoInput_WillResultInExpectedRiskProfileScores(
+    public function testGivenUserInfo_WillResultInExpectedRiskProfileScores(
         ValidatedUserInfo $user_info,
         RiskProfileScore $expected_risk_profile_scores
     ) {
@@ -30,7 +30,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'income' => 0,
                 'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
                 'risk_questions' => [0, 1, 0],
-                'vehicle' => ['manufacturing_year' => 2018]
+                'vehicle' => ['year' => 2018]
             ]),
             new RiskProfileScore(1, null, 0, 2),
         ];
@@ -56,7 +56,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'income' => 0,
                 'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
                 'risk_questions' => [0, 1, 0],
-                'vehicle' => ['manufacturing_year' => 2018]
+                'vehicle' => ['year' => 2018]
             ]),
             new RiskProfileScore(1, null, 0, 2),
         ];
@@ -69,7 +69,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'income' => 0,
                 'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
                 'risk_questions' => [0, 1, 0],
-                'vehicle' => ['manufacturing_year' => 2018]
+                'vehicle' => ['year' => 2018]
             ]),
             new RiskProfileScore(2, null, 1, null),
         ];
@@ -82,7 +82,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'income' => 1,
                 'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
                 'risk_questions' => [0, 0, 0],
-                'vehicle' => ['manufacturing_year' => 2018]
+                'vehicle' => ['year' => 2018]
             ]),
             new RiskProfileScore(0, -1, -1, 1),
         ];
@@ -95,7 +95,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'income' => 1,
                 'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
                 'risk_questions' => [0, 1, 0],
-                'vehicle' => ['manufacturing_year' => 2018]
+                'vehicle' => ['year' => 2018]
             ]),
             new RiskProfileScore(0, -1, -1, 1),
         ];
@@ -108,7 +108,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'income' => 10,
                 'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
                 'risk_questions' => [0, 1, 0],
-                'vehicle' => ['manufacturing_year' => 2018]
+                'vehicle' => ['year' => 2018]
             ]),
             new RiskProfileScore(2, 1, 1, 3),
         ];
@@ -121,7 +121,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'income' => 200001,
                 'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
                 'risk_questions' => [0, 1, 0],
-                'vehicle' => ['manufacturing_year' => 2018]
+                'vehicle' => ['year' => 2018]
             ]),
             new RiskProfileScore(0, -1, -1, 1),
         ];
@@ -134,7 +134,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'income' => 199999,
                 'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
                 'risk_questions' => [0, 1, 0],
-                'vehicle' => ['manufacturing_year' => 2018]
+                'vehicle' => ['year' => 2018]
             ]),
             new RiskProfileScore(1, 0, 0, 2),
         ];
@@ -147,7 +147,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'income' => 1,
                 'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
                 'risk_questions' => [0, 1, 0],
-                'vehicle' => ['manufacturing_year' => 2018]
+                'vehicle' => ['year' => 2018]
             ]),
             new RiskProfileScore(1, 1, 1, 2),
         ];
@@ -160,7 +160,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'income' => 1,
                 'marital_status' => ValidatedUserInfo::SINGLE_STATUS,
                 'risk_questions' => [0, 1, 0],
-                'vehicle' => ['manufacturing_year' => 2018]
+                'vehicle' => ['year' => 2018]
             ]),
             new RiskProfileScore(1, 0, 0, 0),
         ];
@@ -173,7 +173,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'income' => 0,
                 'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
                 'risk_questions' => [0, 1, 0],
-                'vehicle' => ['manufacturing_year' => date("Y") - 6]
+                'vehicle' => ['year' => date("Y") - 6]
             ]),
             new RiskProfileScore(0, null, 0, 2),
         ];
