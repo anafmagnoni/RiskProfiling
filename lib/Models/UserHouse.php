@@ -9,7 +9,7 @@ class UserHouse {
 
     public string $ownership_status;
 
-    public function __construct($unvalidated_user_house_info) {
-        $this->ownership_status = $unvalidated_user_house_info['ownership_status'];
+    public function __construct(string $ownership_status) {
+        $this->ownership_status = $ownership_status;
     }
 }

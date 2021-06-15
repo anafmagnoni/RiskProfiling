@@ -18,10 +18,16 @@ class ValidatedUserInfo {
     public function __construct(array $validated_json) {
         $this->age = $validated_json['age'];
         $this->dependents = $validated_json['dependents'];
-        $this->house = new UserHouse($validated_json['house']);
         $this->income = $validated_json['income'];
         $this->marital_status = $validated_json['marital_status'];
         $this->risk_questions = $validated_json['risk_questions'];
-        $this->vehicle = new UserVehicle($validated_json['vehicle']);
+
+        if ($validated_json['house']) {
+            $this->house = new UserHouse($validated_json['house']['ownership_status']);
+        }
+
+        if ($validated_json['vehicle']) {
+            $this->vehicle = new UserVehicle($validated_json['vehicle']['manufacturing_year']);
+        }
     }
 }

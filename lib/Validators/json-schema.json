@@ -1,0 +1,51 @@
+{
+    "type": "object",
+    "properties": {
+        "age": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "dependents": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "house": {
+            "type": ["object", "null"],
+            "default": null,
+            "properties": {
+                "ownership_status": {
+                    "type": "string",
+                    "enum": ["owned", "mortgaged"]
+                }
+            }
+        },
+        "income": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "marital_status": {
+            "type": "string",
+            "enum": ["married", "single"]
+        },
+        "risk_questions": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+                "type": "integer",
+                "enum": [0, 1]
+            }
+        },
+        "vehicle": {
+            "type": ["object", "null"],
+            "default": null,
+            "properties": {
+                "year": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        }
+    },
+    "required": ["age", "dependents", "income", "marital_status", "risk_questions"]
+}

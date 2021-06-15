@@ -2,6 +2,7 @@
     "name": "origin/risk-profiling",
     "type": "project",
     "require": {
+        "justinrainbow/json-schema": "5.2.10"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"

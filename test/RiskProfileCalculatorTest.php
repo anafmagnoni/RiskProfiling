@@ -2,37 +2,180 @@
 
 namespace Test\Origin\RiskProfiling;
 
-use Origin\RiskProfiling\Models\RiskProfileResult;
+use Origin\RiskProfiling\Models\RiskProfileScore;
+use Origin\RiskProfiling\Models\UserHouse;
 use Origin\RiskProfiling\Models\ValidatedUserInfo;
 use Origin\RiskProfiling\RiskProfileCalculator;
 use PHPUnit\Framework\TestCase;
 
 class RiskProfileCalculatorTest extends TestCase {
 
-    public function testValidUserInfoInput_WillResultInExpectedRiskProfiling() {
-        $validated_user_info = $this->mockValidatedUserInfo();
-        $risk_profile_calculator = new RiskProfileCalculator();
-
-        $risk_profile_result = $risk_profile_calculator->evaluateRiskProfile($validated_user_info);
-
-        $this->assertEquals(RiskProfileResult::INSURANCE_PLAN_REGULAR, $risk_profile_result->auto_line);
-        $this->assertEquals(RiskProfileResult::INSURANCE_PLAN_INELIGIBLE, $risk_profile_result->disability_line);
-        $this->assertEquals(RiskProfileResult::INSURANCE_PLAN_ECONOMIC, $risk_profile_result->home_line);
-        $this->assertEquals(RiskProfileResult::INSURANCE_PLAN_REGULAR, $risk_profile_result->life_line);
+    /**
+     * @dataProvider provideRiskScoreDefiningCases
+     */
+    public function testGivenUserInfoInput_WillResultInExpectedRiskProfileScores(
+        ValidatedUserInfo $user_info,
+        RiskProfileScore $expected_risk_profile_scores
+    ) {
+        $risk_profile_scores = RiskProfileCalculator::evaluateRiskProfile($user_info);
+        $this->assertEquals($expected_risk_profile_scores, $risk_profile_scores);
     }
 
-    private function mockValidatedUserInfo(): ValidatedUserInfo {
-        $example_json = <<<'JSON'
-{
-  "age": 35,
-  "dependents": 2,
-  "house": {"ownership_status": "owned"},
-  "income": 0,
-  "marital_status": "married",
-  "risk_questions": [0, 1, 0],
-  "vehicle": {"year": 2018}
-}
-JSON;
-        return new ValidatedUserInfo(json_decode($example_json, true));
+    public function provideRiskScoreDefiningCases(): iterable {
+        yield 'User with zero income' => [
+            new ValidatedUserInfo([
+                'age' => 35,
+                'dependents' => 2,
+                'house' => ['ownership_status' => UserHouse::OWNED_STATUS],
+                'income' => 0,
+                'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
+                'risk_questions' => [0, 1, 0],
+                'vehicle' => ['manufacturing_year' => 2018]
+            ]),
+            new RiskProfileScore(1, null, 0, 2),
+        ];
+
+        yield 'User with no vehicle' => [
+            new ValidatedUserInfo([
+                'age' => 35,
+                'dependents' => 2,
+                'house' => ['ownership_status' => UserHouse::OWNED_STATUS],
+                'income' => 0,
+                'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
+                'risk_questions' => [0, 1, 0],
+                'vehicle' => null
+            ]),
+            new RiskProfileScore(null, 0, 0, 2),
+        ];
+
+        yield 'User without house properties' => [
+            new ValidatedUserInfo([
+                'age' => 35,
+                'dependents' => 2,
+                'house' => ['ownership_status' => UserHouse::OWNED_STATUS],
+                'income' => 0,
+                'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
+                'risk_questions' => [0, 1, 0],
+                'vehicle' => ['manufacturing_year' => 2018]
+            ]),
+            new RiskProfileScore(1, null, 0, 2),
+        ];
+
+        yield 'User aged over 60 years old' => [
+            new ValidatedUserInfo([
+                'age' => 61,
+                'dependents' => 2,
+                'house' => ['ownership_status' => UserHouse::OWNED_STATUS],
+                'income' => 0,
+                'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
+                'risk_questions' => [0, 1, 0],
+                'vehicle' => ['manufacturing_year' => 2018]
+            ]),
+            new RiskProfileScore(2, null, 1, null),
+        ];
+
+        yield 'User aged between 30 and 40 years old' => [
+            new ValidatedUserInfo([
+                'age' => 35,
+                'dependents' => 2,
+                'house' => ['ownership_status' => UserHouse::OWNED_STATUS],
+                'income' => 1,
+                'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
+                'risk_questions' => [0, 0, 0],
+                'vehicle' => ['manufacturing_year' => 2018]
+            ]),
+            new RiskProfileScore(0, -1, -1, 1),
+        ];
+
+        yield 'User aged under 30 years old' => [
+            new ValidatedUserInfo([
+                'age' => 29,
+                'dependents' => 2,
+                'house' => ['ownership_status' => UserHouse::OWNED_STATUS],
+                'income' => 1,
+                'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
+                'risk_questions' => [0, 1, 0],
+                'vehicle' => ['manufacturing_year' => 2018]
+            ]),
+            new RiskProfileScore(0, -1, -1, 1),
+        ];
+
+        yield 'User aged over 40 and under 60 years old' => [
+            new ValidatedUserInfo([
+                'age' => 50,
+                'dependents' => 2,
+                'house' => ['ownership_status' => UserHouse::OWNED_STATUS],
+                'income' => 10,
+                'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
+                'risk_questions' => [0, 1, 0],
+                'vehicle' => ['manufacturing_year' => 2018]
+            ]),
+            new RiskProfileScore(2, 1, 1, 3),
+        ];
+
+        yield 'User with income above $200k' => [
+            new ValidatedUserInfo([
+                'age' => 35,
+                'dependents' => 2,
+                'house' => ['ownership_status' => UserHouse::OWNED_STATUS],
+                'income' => 200001,
+                'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
+                'risk_questions' => [0, 1, 0],
+                'vehicle' => ['manufacturing_year' => 2018]
+            ]),
+            new RiskProfileScore(0, -1, -1, 1),
+        ];
+
+        yield 'User with income under $200k' => [
+            new ValidatedUserInfo([
+                'age' => 35,
+                'dependents' => 2,
+                'house' => ['ownership_status' => UserHouse::OWNED_STATUS],
+                'income' => 199999,
+                'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
+                'risk_questions' => [0, 1, 0],
+                'vehicle' => ['manufacturing_year' => 2018]
+            ]),
+            new RiskProfileScore(1, 0, 0, 2),
+        ];
+
+        yield 'User with mortgaged house' => [
+            new ValidatedUserInfo([
+                'age' => 35,
+                'dependents' => 2,
+                'house' => ['ownership_status' => UserHouse::MORTGAGED_STATUS],
+                'income' => 1,
+                'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
+                'risk_questions' => [0, 1, 0],
+                'vehicle' => ['manufacturing_year' => 2018]
+            ]),
+            new RiskProfileScore(1, 1, 1, 2),
+        ];
+
+        yield 'User with single marital status' => [
+            new ValidatedUserInfo([
+                'age' => 35,
+                'dependents' => 0,
+                'house' => ['ownership_status' => UserHouse::OWNED_STATUS],
+                'income' => 1,
+                'marital_status' => ValidatedUserInfo::SINGLE_STATUS,
+                'risk_questions' => [0, 1, 0],
+                'vehicle' => ['manufacturing_year' => 2018]
+            ]),
+            new RiskProfileScore(1, 0, 0, 0),
+        ];
+
+        yield 'User with vehicle older than five years ago' => [
+            new ValidatedUserInfo([
+                'age' => 35,
+                'dependents' => 2,
+                'house' => ['ownership_status' => UserHouse::OWNED_STATUS],
+                'income' => 0,
+                'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
+                'risk_questions' => [0, 1, 0],
+                'vehicle' => ['manufacturing_year' => date("Y") - 6]
+            ]),
+            new RiskProfileScore(0, null, 0, 2),
+        ];
     }
 }

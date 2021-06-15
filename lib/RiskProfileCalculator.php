@@ -2,24 +2,24 @@
 
 namespace Origin\RiskProfiling;
 
-use Origin\RiskProfiling\Models\RiskProfileResult;
+use Origin\RiskProfiling\Models\RiskProfileScore;
 use Origin\RiskProfiling\Models\ValidatedUserInfo;
 
 class RiskProfileCalculator {
 
-    public function evaluateRiskProfile(ValidatedUserInfo $user_info): RiskProfileResult {
-        $risk_profiles = $this->initializeRiskProfiles();
-        $risk_profiles = $this->applyRiskCalculatingRules($risk_profiles, $user_info);
+    public static function evaluateRiskProfile(ValidatedUserInfo $user_info): RiskProfileScore {
+        $risk_profiles = self::initializeRiskProfiles();
+        $risk_profiles = self::applyRiskCalculatingRules($risk_profiles, $user_info);
 
-        return new RiskProfileResult(
-            self::definePlanForInsuranceLine($risk_profiles['auto']),
-            self::definePlanForInsuranceLine($risk_profiles['disability']),
-            self::definePlanForInsuranceLine($risk_profiles['home']),
-            self::definePlanForInsuranceLine($risk_profiles['life']),
+        return new RiskProfileScore(
+            self::getRiskScoreOrNull($risk_profiles['auto']),
+            self::getRiskScoreOrNull($risk_profiles['disability']),
+            self::getRiskScoreOrNull($risk_profiles['home']),
+            self::getRiskScoreOrNull($risk_profiles['life']),
         );
     }
 
-    private function applyRiskCalculatingRules(array $risk_profiles, ValidatedUserInfo $user_info): array {
+    private static function applyRiskCalculatingRules(array $risk_profiles, ValidatedUserInfo $user_info): array {
         $rules = [
             new Internal\UserRiskQuestionsProfilingRules(),
             new Internal\UserIneligibilityProfilingRules(),
@@ -38,7 +38,7 @@ class RiskProfileCalculator {
         return $risk_profiles;
     }
 
-    private function initializeRiskProfiles(): array {
+    private static function initializeRiskProfiles(): array {
         $insurance_line_template = [
             'risk_score' => 0,
             'risk_score_profile' => null,
@@ -53,18 +53,11 @@ class RiskProfileCalculator {
         ];
     }
 
-    private static function definePlanForInsuranceLine(array $insurance_line): string {
-        $risk_score = $insurance_line['risk_score'];
-
-        if(!$insurance_line['user_eligibility']) {
-            return RiskProfileResult::INSURANCE_PLAN_INELIGIBLE;
+    private static function getRiskScoreOrNull(array $risk_profile): ?int {
+        if($risk_profile['user_eligibility']) {
+            return $risk_profile['risk_score'];
         }
 
-        return match (true) {
-            ($risk_score <= 0) => RiskProfileResult::INSURANCE_PLAN_ECONOMIC,
-            ($risk_score > 0 && $risk_score <= 2) => RiskProfileResult::INSURANCE_PLAN_REGULAR,
-            ($risk_score >= 3) => RiskProfileResult::INSURANCE_PLAN_RESPONSIBLE,
-        };
+        return null;
     }
-
 }

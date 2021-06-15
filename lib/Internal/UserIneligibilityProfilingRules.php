@@ -9,31 +9,31 @@ use Origin\RiskProfiling\Models\ValidatedUserInfo;
 class UserIneligibilityProfilingRules implements RiskProfilerCalculatorRule {
 
     public function applyRule(array $risk_profiles, ValidatedUserInfo $user_info): array {
-        $risk_profiles = self::applyIncomeIneligibilityRule($risk_profiles, $user_info->income);
-        $risk_profiles = self::applyVehicleIneligibilityRule($risk_profiles, $user_info->vehicle);
-        $risk_profiles = self::applyHouseIneligibilityRule($risk_profiles, $user_info->house);
+        $risk_profiles = self::applyIncomeIneligibilityRule($risk_profiles, $user_info);
+        $risk_profiles = self::applyVehicleIneligibilityRule($risk_profiles, $user_info);
+        $risk_profiles = self::applyHouseIneligibilityRule($risk_profiles, $user_info);
 
         return self::applyAgeIneligibilityRule($risk_profiles, $user_info->age);
     }
 
-    private static function applyIncomeIneligibilityRule(array $risk_profiles, int $income): array {
-        if($income == 0) {
+    private static function applyIncomeIneligibilityRule(array $risk_profiles, ValidatedUserInfo $user_info): array {
+        if($user_info->income == 0) {
             $risk_profiles['disability']['user_eligibility'] = false;
         }
 
         return $risk_profiles;
     }
 
-    private static function applyVehicleIneligibilityRule(array $risk_profiles, ?UserVehicle $vehicle): array {
-        if(is_null($vehicle)) {
+    private static function applyVehicleIneligibilityRule(array $risk_profiles, ValidatedUserInfo $user_info): array {
+        if(!isset($user_info->vehicle)) {
             $risk_profiles['auto']['user_eligibility'] = false;
         }
 
         return $risk_profiles;
     }
 
-    private static function applyHouseIneligibilityRule(array $risk_profiles, ?UserHouse $house): array {
-        if(is_null($house)) {
+    private static function applyHouseIneligibilityRule(array $risk_profiles, ValidatedUserInfo $user_info): array {
+        if(!isset($user_info->house)) {
             $risk_profiles['home']['user_eligibility'] = false;
         }
 
