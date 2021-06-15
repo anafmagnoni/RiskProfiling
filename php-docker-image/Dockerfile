@@ -7,8 +7,9 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; \
     mv composer.phar /usr/local/bin/composer
 
 RUN apt-get update; \
-    apt-get install -y git
+    apt-get install -y git; \
+    apt-get install -y zip unzip
 
 WORKDIR /var/www/html
 
-ENTRYPOINT php -S 0.0.0.0:8080 public/index.php
+ENTRYPOINT bash -c "composer install; php -S 0.0.0.0:8080 public/index.php"
