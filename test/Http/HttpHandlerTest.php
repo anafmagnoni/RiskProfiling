@@ -39,7 +39,8 @@ class HttpHandlerTest extends TestCase {
                     'auto' => 'regular',
                     'disability' => 'ineligible',
                     'home' => 'economic',
-                    'life' => 'regular'
+                    'life' => 'regular',
+                    'renters' => 'ineligible'
                 ],
                 $status = 200
             )

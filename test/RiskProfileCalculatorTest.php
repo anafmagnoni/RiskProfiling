@@ -32,7 +32,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'risk_questions' => [1, 0, 0],
                 'vehicle' => ['year' => 2018]
             ]),
-            new RiskProfileScore(1, null, 0, 2),
+            new RiskProfileScore(1, null, 0, 2, null),
         ];
 
         yield 'User with no vehicle' => [
@@ -45,7 +45,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'risk_questions' => [1, 0, 0],
                 'vehicle' => null
             ]),
-            new RiskProfileScore(null, 0, 0, 2),
+            new RiskProfileScore(null, 0, 0, 2, null),
         ];
 
         yield 'User without house properties' => [
@@ -58,7 +58,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'risk_questions' => [1, 0, 0],
                 'vehicle' => ['year' => 2018]
             ]),
-            new RiskProfileScore(1, null, 0, 2),
+            new RiskProfileScore(1, null, 0, 2, null),
         ];
 
         yield 'User aged over 60 years old' => [
@@ -71,7 +71,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'risk_questions' => [1, 0, 0],
                 'vehicle' => ['year' => 2018]
             ]),
-            new RiskProfileScore(2, null, 1, null),
+            new RiskProfileScore(2, null, 1, null, null),
         ];
 
         yield 'User aged between 30 and 40 years old' => [
@@ -84,7 +84,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'risk_questions' => [0, 0, 0],
                 'vehicle' => ['year' => 2018]
             ]),
-            new RiskProfileScore(0, -1, -1, 1),
+            new RiskProfileScore(0, -1, -1, 1, null),
         ];
 
         yield 'User aged under 30 years old' => [
@@ -97,7 +97,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'risk_questions' => [1, 0, 0],
                 'vehicle' => ['year' => 2018]
             ]),
-            new RiskProfileScore(0, -1, -1, 1),
+            new RiskProfileScore(0, -1, -1, 1, null),
         ];
 
         yield 'User aged over 40 and under 60 years old' => [
@@ -110,7 +110,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'risk_questions' => [1, 0, 0],
                 'vehicle' => ['year' => 2018]
             ]),
-            new RiskProfileScore(2, 1, 1, 3),
+            new RiskProfileScore(2, 1, 1, 3, null),
         ];
 
         yield 'User with income above $200k' => [
@@ -123,7 +123,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'risk_questions' => [1, 0, 0],
                 'vehicle' => ['year' => 2018]
             ]),
-            new RiskProfileScore(0, -1, -1, 1),
+            new RiskProfileScore(0, -1, -1, 1, null),
         ];
 
         yield 'User with income under $200k' => [
@@ -136,7 +136,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'risk_questions' => [1, 0, 0],
                 'vehicle' => ['year' => 2018]
             ]),
-            new RiskProfileScore(1, 0, 0, 2),
+            new RiskProfileScore(1, 0, 0, 2, null),
         ];
 
         yield 'User with mortgaged house' => [
@@ -149,7 +149,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'risk_questions' => [1, 0, 0],
                 'vehicle' => ['year' => 2018]
             ]),
-            new RiskProfileScore(1, 1, 1, 2),
+            new RiskProfileScore(1, 1, 1, 2, null),
         ];
 
         yield 'User with single marital status' => [
@@ -162,7 +162,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'risk_questions' => [1, 0, 0],
                 'vehicle' => ['year' => 2018]
             ]),
-            new RiskProfileScore(1, 0, 0, 0),
+            new RiskProfileScore(1, 0, 0, 0, null),
         ];
 
         yield 'User with vehicle older than five years ago' => [
@@ -175,7 +175,7 @@ class RiskProfileCalculatorTest extends TestCase {
                 'risk_questions' => [1, 0, 0],
                 'vehicle' => ['year' => date("Y") - 6]
             ]),
-            new RiskProfileScore(0, null, 0, 2),
+            new RiskProfileScore(0, null, 0, 2, null),
         ];
 
         yield 'User that answered yes to second risk question will have two points added to Disability score' => [
@@ -188,7 +188,20 @@ class RiskProfileCalculatorTest extends TestCase {
                 'risk_questions' => [0, 1, 0],
                 'vehicle' => ['year' => date("Y") - 6]
             ]),
-            new RiskProfileScore(0, 2, 0, 2),
+            new RiskProfileScore(0, 2, 0, 2, null),
+        ];
+
+        yield 'User with rented house will be eligible for Renters insurance line' => [
+            new ValidatedUserInfo([
+                'age' => 35,
+                'dependents' => 2,
+                'house' => ['ownership_status' => UserHouse::RENTED_STATUS],
+                'income' => 10,
+                'marital_status' => ValidatedUserInfo::MARRIED_STATUS,
+                'risk_questions' => [0, 1, 0],
+                'vehicle' => ['year' => date("Y") - 6]
+            ]),
+            new RiskProfileScore(0, 2, null, 2, 0),
         ];
     }
 }
