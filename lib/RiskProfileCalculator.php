@@ -16,6 +16,7 @@ class RiskProfileCalculator {
             self::getRiskScoreOrNull($risk_profiles['disability']),
             self::getRiskScoreOrNull($risk_profiles['home']),
             self::getRiskScoreOrNull($risk_profiles['life']),
+            self::getRiskScoreOrNull($risk_profiles['renters']),
         );
     }
 
@@ -50,6 +51,7 @@ class RiskProfileCalculator {
             'disability' => $insurance_line_template,
             'home' => $insurance_line_template,
             'life' => $insurance_line_template,
+            'renters' => $insurance_line_template,
         ];
     }
 

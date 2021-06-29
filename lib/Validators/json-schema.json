@@ -15,7 +15,7 @@
             "properties": {
                 "ownership_status": {
                     "type": "string",
-                    "enum": ["owned", "mortgaged"]
+                    "enum": ["owned", "mortgaged", "rented"]
                 }
             }
         },

@@ -9,5 +9,6 @@ class RiskProfileScore {
         public ?int $disability_score,
         public ?int $home_score,
         public ?int $life_score,
+        public ?int $renters_score,
     ) {}
 }

@@ -44,6 +44,7 @@ class RiskProfilingHandler {
             'disability' => RiskProfilePlanDefiner::definePlanForRiskScore($user_risk_profile_scores->disability_score),
             'home' => RiskProfilePlanDefiner::definePlanForRiskScore($user_risk_profile_scores->home_score),
             'life' => RiskProfilePlanDefiner::definePlanForRiskScore($user_risk_profile_scores->life_score),
+            'renters' => RiskProfilePlanDefiner::definePlanForRiskScore($user_risk_profile_scores->renters_score),
         ];
     }
 

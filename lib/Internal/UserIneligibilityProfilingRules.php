@@ -35,6 +35,14 @@ class UserIneligibilityProfilingRules implements RiskProfilerCalculatorRule {
     private static function applyHouseIneligibilityRule(array $risk_profiles, ValidatedUserInfo $user_info): array {
         if(!isset($user_info->house)) {
             $risk_profiles['home']['user_eligibility'] = false;
+            $risk_profiles['renters']['user_eligibility'] = false;
+        }
+
+        if($user_info->house->ownership_status == UserHouse::RENTED_STATUS) {
+            $risk_profiles['home']['user_eligibility'] = false;
+        }
+        else {
+            $risk_profiles['renters']['user_eligibility'] = false;
         }
 
         return $risk_profiles;
