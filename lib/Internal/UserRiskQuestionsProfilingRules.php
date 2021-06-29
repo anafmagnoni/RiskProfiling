@@ -13,6 +13,16 @@ class UserRiskQuestionsProfilingRules implements RiskProfilerCalculatorRule {
             $risk_profile['risk_score'] = $initial_risk_sum;
         }
 
+        $risk_profiles['disability'] = $this->applySecondQuestionRule($user_info->risk_questions, $risk_profiles['disability']);
+
         return $risk_profiles;
+    }
+
+    private function applySecondQuestionRule(array $risk_questions, array $disability_line): array {
+        if($risk_questions[1]) {
+            $disability_line['risk_score'] += 2;
+        }
+
+        return $disability_line;
     }
 }
